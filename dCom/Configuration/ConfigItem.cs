@@ -287,12 +287,84 @@ namespace dCom.Configuration
 			Description = configurationParameters[8].TrimStart('@');
             if (configurationParameters[9].Equals("#"))
             {
-                AcquisitionInterval = 1;
+                AcquisitionInterval = 0;
             }
             else
             {
                 Int32.TryParse(configurationParameters[9], out temp);
                 AcquisitionInterval = temp;
+            }
+            if (configurationParameters[10].Equals("#"))
+            {
+                ScaleFactor = 1;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[10], out temp);
+                ScaleFactor = temp;
+            }
+            if (configurationParameters[11].Equals("#"))
+            {
+                Deviation = 1;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[11], out temp);
+                Deviation = temp;
+            }
+            if (configurationParameters[12].Equals("#"))
+            {
+                EGU_Max = 100;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[12], out temp);
+                EGU_Max = temp;
+            }
+            if (configurationParameters[13].Equals("#"))
+            {
+                EGU_Min = 10;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[13], out temp);
+                EGU_Min = temp;
+            }
+            if (configurationParameters[14].Equals("#"))
+            {
+                AbnormalValue = 1;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[14], out temp);
+                AbnormalValue = (ushort)temp;
+            }
+            if (configurationParameters[15].Equals("#"))
+            {
+                HighLimit = 90;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[15], out temp);
+                HighLimit = temp;
+            }
+            if (configurationParameters[16].Equals("#"))
+            {
+                LowLimit = 1;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[16], out temp);
+                LowLimit = temp;
+            }
+            if (configurationParameters[17].Equals("#"))
+            {
+                SecondsPassedSinceLastPoll = 1;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[17], out temp);
+                SecondsPassedSinceLastPoll = temp;
             }
         }
 
