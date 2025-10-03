@@ -42,6 +42,26 @@ namespace ProcessingModule
         /// <inheritdoc />
         public void ExecuteWriteCommand(IConfigItem configItem, ushort transactionId, byte remoteUnitAddress, ushort pointAddress, int value)
         {
+            if (pointAddress >= 1000 && pointAddress <= 1003)
+            {
+                // Pronađi kapacitet baterije K (adresa 2000)
+                List<IPoint> batteryPoints = storage.GetPoints(
+                    new List<PointIdentifier> { new PointIdentifier(PointType.ANALOG_OUTPUT, 2000) }
+                );
+
+                if (batteryPoints.Count > 0)
+                {
+                    IAnalogPoint battery = batteryPoints[0] as IAnalogPoint;
+
+                    // Proveri da li je kapacitet veći od LowLimit
+                    if (battery.EguValue <= battery.ConfigItem.LowLimit)
+                    {
+                        // Ne izvršavaj komandu - kapacitet je prenizak!
+                        return;
+                    }
+                }
+            }
+
             if (configItem.RegistryType == PointType.ANALOG_OUTPUT)
             {
                 ExecuteAnalogCommand(configItem, transactionId, remoteUnitAddress, pointAddress, value);
@@ -77,6 +97,7 @@ namespace ProcessingModule
         /// <param name="value">The value.</param>
         private void ExecuteAnalogCommand(IConfigItem configItem, ushort transactionId, byte remoteUnitAddress, ushort pointAddress, int value)
         {
+            ushort rawValue = eguConverter.ConvertToRaw(configItem.ScaleFactor, configItem.Deviation, value);
             ModbusWriteCommandParameters p = new ModbusWriteCommandParameters(6, (byte)ModbusFunctionCode.WRITE_SINGLE_REGISTER, pointAddress, (ushort)value, transactionId, remoteUnitAddress);
             IModbusFunction fn = FunctionFactory.CreateModbusFunction(p);
             this.functionExecutor.EnqueueCommand(fn);
@@ -142,6 +163,8 @@ namespace ProcessingModule
         {
             point.RawValue = newValue;
             point.Timestamp = DateTime.Now;
+            point.EguValue = eguConverter.ConvertToEGU(point.ConfigItem.ScaleFactor, point.ConfigItem.Deviation, newValue);
+            point.Alarm = alarmProcessor.GetAlarmForAnalogPoint(point.EguValue, point.ConfigItem);
         }
 
         /// <inheritdoc />
