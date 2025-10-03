@@ -14,7 +14,13 @@ namespace dCom.Configuration
 
 		private byte unitAddress;
 		private int tcpPort;
-		private ConfigItemEqualityComparer confItemEqComp = new ConfigItemEqualityComparer();
+        public int A { get; private set; } = 1;
+        public int B { get; private set; } = 0;
+        public int LowAlarm { get; private set; } = 20;
+        public int EguMax { get; private set; } = 100;
+        public int AbnormalValue { get; private set; } = 1;
+
+        private ConfigItemEqualityComparer confItemEqComp = new ConfigItemEqualityComparer();
 
 		private Dictionary<string, IConfigItem> pointTypeToConfiguration = new Dictionary<string, IConfigItem>();
 
@@ -102,7 +108,33 @@ namespace dCom.Configuration
 						DelayBetweenCommands = Convert.ToInt32(filtered[filtered.Count - 1]);
 						continue;
 					}
-					try
+                    if (s.StartsWith("A"))
+                    {
+                        A = Convert.ToInt32(filtered.Last());
+                        continue;
+                    }
+                    if (s.StartsWith("B"))
+                    {
+                        B = Convert.ToInt32(filtered.Last());
+                        continue;
+                    }
+                    if (s.StartsWith("LowAlarm"))
+                    {
+                        LowAlarm = Convert.ToInt32(filtered.Last());
+                        continue;
+                    }
+                    if (s.StartsWith("EguMax"))
+                    {
+                        EguMax = Convert.ToInt32(filtered.Last());
+                        continue;
+                    }
+                    if (s.StartsWith("AbnormalValue"))
+                    {
+                        AbnormalValue = Convert.ToInt32(filtered.Last());
+                        continue;
+                    }
+
+                    try
                     {
                         ConfigItem ci = new ConfigItem(filtered);
                         if (pointTypeToConfiguration.Count > 0)
