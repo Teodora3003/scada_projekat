@@ -42,6 +42,26 @@ namespace ProcessingModule
         /// <inheritdoc />
         public void ExecuteWriteCommand(IConfigItem configItem, ushort transactionId, byte remoteUnitAddress, ushort pointAddress, int value)
         {
+            if (pointAddress >= 1000 && pointAddress <= 1003)
+            {
+                // Pronađi kapacitet baterije K (adresa 2000)
+                List<IPoint> batteryPoints = storage.GetPoints(
+                    new List<PointIdentifier> { new PointIdentifier(PointType.ANALOG_OUTPUT, 2000) }
+                );
+
+                if (batteryPoints.Count > 0)
+                {
+                    IAnalogPoint battery = batteryPoints[0] as IAnalogPoint;
+
+                    // Proveri da li je kapacitet veći od LowLimit
+                    if (battery.EguValue <= battery.ConfigItem.LowLimit)
+                    {
+                        // Ne izvršavaj komandu - kapacitet je prenizak!
+                        return;
+                    }
+                }
+            }
+
             if (configItem.RegistryType == PointType.ANALOG_OUTPUT)
             {
                 ExecuteAnalogCommand(configItem, transactionId, remoteUnitAddress, pointAddress, value);
