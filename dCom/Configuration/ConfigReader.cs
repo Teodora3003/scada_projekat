@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace dCom.Configuration
 {
-    internal class ConfigReader : IConfiguration
+    public class ConfigReader : IConfiguration
 	{
 		private ushort transactionId = 0;
 

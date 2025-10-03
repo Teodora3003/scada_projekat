@@ -105,6 +105,7 @@ namespace ProcessingModule
                                             configuration.UnitAddress,
                                             1003, 0
                                         );
+                                        t4.State = DState.OFF;
                                         Thread.Sleep(delayBetweenCommands);
                                     }
                                 }
